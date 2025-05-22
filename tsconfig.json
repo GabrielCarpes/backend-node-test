@@ -7,7 +7,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "target": "es2022",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -28,9 +28,6 @@
       ],
       "@infra/*": [
         "./src/shared/infra/*"
-      ],
-      "@test/*": [
-        "./test/*"
       ],
       "@shared/*": [
         "./src/shared/*"

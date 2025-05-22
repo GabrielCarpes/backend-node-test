@@ -6,6 +6,8 @@ import { CreateTransactionService } from './application/services/create-transact
 import { CreateTransactionUseCase } from './application/useCases/create-transactio-usecase';
 import { TransactionController } from './infra/http/controllers/transaction.controller';
 import { InMemoryTransctionsRepository } from './application/repositories/in-memory/in-memory-transaction.repository';
+import { DeleteAllTransactionService } from './application/services/delete-all-transaction.service';
+import { DeleteAllTransactionUseCase } from './application/useCases/delete-all-transactio-usecase';
 
 @Module({
   controllers: [TransactionController],
@@ -20,6 +22,8 @@ import { InMemoryTransctionsRepository } from './application/repositories/in-mem
     },
     CreateTransactionService,
     CreateTransactionUseCase,
+    DeleteAllTransactionService,
+    DeleteAllTransactionUseCase,
   ],
 })
 export class TransactionModule { }

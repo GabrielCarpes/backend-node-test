@@ -4,7 +4,7 @@ import { Transaction } from "../entities/transaction";
 import { Test, TestingModule } from "@nestjs/testing";
 import { CreateTransactionRequest } from "../interfaces/create-transaction-request.interface";
 import { CreateTransactionUnexpectedError } from "../errors/create-transaction-unexpected-error";
-import { transactionMock } from "@test/factories/transaction.factory";
+import { transactionMock } from "./../../../../../test/factories/transaction.factory";
 
 
 const transactionMocked = transactionMock({});

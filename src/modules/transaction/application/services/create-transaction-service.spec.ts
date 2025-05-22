@@ -1,10 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { undefined } from 'zod';
 import { CreateTransactionService } from "./create-transaction.service";
 import { CreateTransactionRequest } from "../interfaces/create-transaction-request.interface";
 import { CreateTransactionUseCase } from "../useCases/create-transactio-usecase";
-import { transactionMock } from "@test/factories/transaction.factory";
-import { Transaction } from "../entities/transaction";
+import { transactionMock } from "./../../../../../test/factories/transaction.factory";
 import { CreateTransactionUnexpectedError } from "../errors/create-transaction-unexpected-error";
 
 const transactionMocked = transactionMock({});
