@@ -2,6 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
+    "moduleResolution": "node",
     "removeComments": true,
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
@@ -15,6 +16,7 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "strict": true,
+    "esModuleInterop": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
@@ -31,6 +33,9 @@
       ],
       "@shared/*": [
         "./src/shared/*"
+      ],
+      "@/*": [
+        "./src/*"
       ]
     }
   }

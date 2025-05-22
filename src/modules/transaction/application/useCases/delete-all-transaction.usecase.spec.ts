@@ -45,4 +45,12 @@ describe('DeleteAllTransactionUseCase', () => {
     expect(spyTransactionRespositoryDeleteAll).toHaveBeenCalledTimes(1);
     expect(deleteAllTransactionUseCase.execute()).not.toBeInstanceOf(DeleteTransactionUnexpectedError);
   });
+
+  it('should throw error if delet all fails', async () => {
+    spyTransactionRespositoryDeleteAll.mockImplementationOnce(() => {
+      throw new DeleteTransactionUnexpectedError();
+    });
+    await expect(deleteAllTransactionUseCase.execute()).rejects.toThrow(DeleteTransactionUnexpectedError);
+    expect(spyTransactionRespositoryDeleteAll).toHaveBeenCalledTimes(1);
+  });
 });

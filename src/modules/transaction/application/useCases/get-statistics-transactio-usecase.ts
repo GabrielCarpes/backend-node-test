@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '../entities/transaction';
 import { TransactionRepository } from '../repositories/transaction.repository';
-import { CreateTransactionUnexpectedError } from '../errors/create-transaction-unexpected-error';
 import { Stats } from '../interfaces/transaction.interface';
+import { GetStatsTransactionsUnexpectedError } from '../errors/get-stats-transaction-unexpected-error';
 
 @Injectable()
 export class GetStatsTransactionUseCase {
@@ -12,7 +12,7 @@ export class GetStatsTransactionUseCase {
     try {
       return this.transactionRepository.getStats();
     } catch (error) {
-      throw new CreateTransactionUnexpectedError();
+      throw new GetStatsTransactionsUnexpectedError();
     }
   }
 }

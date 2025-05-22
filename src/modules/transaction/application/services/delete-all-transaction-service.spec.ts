@@ -45,10 +45,26 @@ describe('DeleteAllTransactionService', () => {
   });
 
   it("should be able to deleteAll a transaction", async () => {
-
     await deleteAllTransactionService.execute();
+
+    spyDeleteAllTransactionUseCaseExecute.mockReturnValueOnce(
+      Promise.resolve(undefined),
+    );
 
     expect(spyDeleteAllTransactionUseCaseExecute).toHaveBeenCalledTimes(1);
     expect(deleteAllTransactionService.execute()).not.toBeInstanceOf(DeleteTransactionUnexpectedError);
+  });
+
+  it("should return undefined when delete is successful", async () => {
+    const result = await deleteAllTransactionService.execute();
+    expect(result).toBeUndefined();
+  });
+
+  it("should throw DeleteTransactionUnexpectedError if use case throws an error", async () => {
+    spyDeleteAllTransactionUseCaseExecute.mockImplementationOnce(() => {
+      throw new DeleteTransactionUnexpectedError();
+    });
+
+    await expect(deleteAllTransactionService.execute()).rejects.toThrow(DeleteTransactionUnexpectedError);
   });
 });

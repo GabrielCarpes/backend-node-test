@@ -1,59 +1,59 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { CreateTransactionService } from "./create-transaction.service";
-import { CreateTransactionUseCase } from "../useCases/create-transactio-usecase";
-import { CreateTransactionUnexpectedError } from "../errors/create-transaction-unexpected-error";
-import { transactionMock } from "test/factories/transaction.factory";
-import { CreateTransactionRequest } from "../interfaces/transaction.interface";
+import { Test, TestingModule } from '@nestjs/testing';
+import { GetStatsTransactionService } from './get-statistics-transaction.service';
+import { GetStatsTransactionUseCase } from '../useCases/get-statistics-transactio-usecase';
+import { GetStatsTransactionsUnexpectedError } from '../errors/get-stats-transaction-unexpected-error';
+import { StatsResponseDTO } from '@modules/transaction/infra/http/dtos/stats-response.dto';
 
-const transactionMocked = transactionMock({});
+describe('GetStatsTransactionService', () => {
+  let getStatsTransactionService: GetStatsTransactionService;
+  let getStatsTransactionUseCase: GetStatsTransactionUseCase;
 
-let createTransactionService: CreateTransactionService;
+  const statsMock: StatsResponseDTO = {
+    count: 5,
+    sum: 500,
+    avg: 100,
+    min: 50,
+    max: 200,
+  };
 
-let spyCreateTransactionUseCaseExecute: jest.SpyInstance<
-  Promise<void>,
-  [payload: CreateTransactionRequest]
->;
+  let spyUseCaseExecute: jest.SpyInstance<Promise<StatsResponseDTO>, []>;
 
-describe('CreateTransactionService', () => {
   beforeEach(async () => {
-    const createTransactionUseCaseMocked = {
-      provide: CreateTransactionUseCase,
+    const useCaseMock = {
+      provide: GetStatsTransactionUseCase,
       useValue: {
-        execute: jest.fn(() => transactionMocked),
+        execute: jest.fn().mockResolvedValue(statsMock),
       },
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [],
-      controllers: [],
       providers: [
-        createTransactionUseCaseMocked
+        GetStatsTransactionService,
+        useCaseMock,
       ],
     }).compile();
 
-    const createTransactionUseCase =
-      module.get<CreateTransactionUseCase>(CreateTransactionUseCase);
+    getStatsTransactionService = module.get(GetStatsTransactionService);
+    getStatsTransactionUseCase = module.get(GetStatsTransactionUseCase);
 
-    createTransactionService = new CreateTransactionService(
-      createTransactionUseCase
-    );
-
-    spyCreateTransactionUseCaseExecute = jest.spyOn(createTransactionUseCase, 'execute');
+    spyUseCaseExecute = jest.spyOn(getStatsTransactionUseCase, 'execute');
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should be able to create a transaction", async () => {
-    const props: CreateTransactionRequest = {
-      amount: 120.00,
-      timestamp: "2024-02-20T12:34:56.789Z"
-    };
+  it('should return transaction stats successfully', async () => {
+    const result = await getStatsTransactionService.execute();
 
-    await createTransactionService.execute(props);
+    expect(spyUseCaseExecute).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(statsMock);
+  });
 
-    expect(spyCreateTransactionUseCaseExecute).toHaveBeenCalledTimes(1);
-    expect(createTransactionService.execute(props)).not.toBeInstanceOf(CreateTransactionUnexpectedError);
+  it('should throw GetStatsTransactionsUnexpectedError if useCase throws', async () => {
+    spyUseCaseExecute.mockRejectedValueOnce(new Error('DB failure'));
+
+    await expect(getStatsTransactionService.execute()).rejects.toThrow(GetStatsTransactionsUnexpectedError);
+    expect(spyUseCaseExecute).toHaveBeenCalledTimes(1);
   });
 });

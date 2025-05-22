@@ -1,5 +1,3 @@
-import { uuid } from '@helpers/uuid';
-
 export class Transaction {
   private amount: number;
   private timestamp: string;
@@ -12,7 +10,7 @@ export class Transaction {
     this.timestamp = timestamp
   };
 
-  public get getAmount() {
+  public get getAmount(): number {
     return this.amount;
   }
 

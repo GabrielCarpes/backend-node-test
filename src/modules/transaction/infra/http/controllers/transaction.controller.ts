@@ -20,10 +20,10 @@ import { InvalidFieldsExceptionDTO } from "../dtos/invalid-fields-exception.dto"
 import { DeleteTransactionUnexpectedError } from "@modules/transaction/application/errors/delete-transaction-unexpected-error";
 import { DeleteAllTransactionService } from "@modules/transaction/application/services/delete-all-transaction.service";
 import { GetStatsTransactionUseCase } from "@modules/transaction/application/useCases/get-statistics-transactio-usecase";
-import { Stats } from "@modules/transaction/application/interfaces/transaction.interface";
 import { GetStatsTransactionService } from "@modules/transaction/application/services/get-statistics-transaction.service";
+import { StatsResponseDTO } from "../dtos/stats-response.dto";
 
-@ApiTags("Transaction")
+@ApiTags("Transações")
 @Controller("transactions")
 export class TransactionController {
   constructor(
@@ -33,44 +33,57 @@ export class TransactionController {
   ) {}
 
   @ApiOperation({
-    summary: "Cria transação",
-    description:
-      "<p><strong>Descrição:</strong></p><p>Esta rota é utilizada para criar um transação.",
+    summary: "Criar uma nova transação",
+    description: `
+      Cria uma nova transação financeira com valor e timestamp informados.
+    `,
   })
   @HttpCode(HttpStatus.CREATED)
-  @ApiBody({ type: CreateTransactionBodyDTO })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
+  @ApiBody({ 
+    type: CreateTransactionBodyDTO, 
+    description: "Objeto contendo os dados da transação a ser criada." 
   })
   @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
+    status: HttpStatus.CREATED,
+    description: "Transação criada com sucesso.",
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: "Dados inválidos enviados no corpo da requisição.",
+    type: InvalidFieldsExceptionDTO,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: "O timestamp informado deve estar no formato ISO 8601 (UTC).",
     type: InvalidFieldsExceptionDTO,
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: "Erro inesperado ao tentar criar a transação.",
     type: CreateTransactionUnexpectedError,
   })
   @Post()
   async createTransaction(
     @Body() { amount, timestamp }: CreateTransactionBodyDTO
   ): Promise<void> {
-    await this.createTransactionService.execute({
-      amount, 
-      timestamp
-    });
+    await this.createTransactionService.execute({ amount, timestamp });
   }
 
   @ApiOperation({
-    summary: "Remove todas as transação",
-    description:
-      "<p><strong>Descrição:</strong></p><p>Esta rota é utilizada para remover todas as transação.",
+    summary: "Remover todas as transações",
+    description: `
+      Remove todas as transações existentes no sistema.
+      Esta ação é irreversível e remove todos os dados de transações atuais.
+    `,
   })
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.NO_CONTENT,
+    description: "Todas as transações foram removidas com sucesso.",
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: "Erro inesperado ao tentar remover as transações.",
     type: DeleteTransactionUnexpectedError,
   })
   @Delete()
@@ -79,20 +92,26 @@ export class TransactionController {
   }
 
   @ApiOperation({
-    summary: "Retorna a estatística das transações",
-    description:
-      "<p><strong>Descrição:</strong></p><p>Esta rota é utilizada para retornar a estatística das transações dos últimos 60 segundos.",
+    summary: "Obter estatísticas das transações",
+    description: `
+      Retorna as estatísticas calculadas com base nas transações dos últimos 60 segundos.
+      As estatísticas incluem soma, média, máximo, mínimo e quantidade de transações nesse período.
+    `,
   })
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,
+    description: "Estatísticas obtidas com sucesso.",
+    type: StatsResponseDTO,
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: "Erro inesperado ao tentar obter as estatísticas.",
     type: GetStatsTransactionUseCase,
   })
-  @Get()
-  async getStatsTransaction(): Promise<Stats> {
+  @Get('/stats')
+  async getStatsTransaction(): Promise<StatsResponseDTO> {
     return await this.getStatsTransactionService.execute();
   }
 }
+

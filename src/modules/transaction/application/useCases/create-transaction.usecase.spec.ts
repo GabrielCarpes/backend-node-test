@@ -40,15 +40,29 @@ describe('CreateTransactionUseCase', () => {
     jest.clearAllMocks();
   });
 
-  it('should be able to create a Transaction', async () => {
-    const props: CreateTransactionRequest = {
-      amount: 120.00,
-      timestamp: "2024-02-20T12:34:56.789Z"
+  it('should create a transaction successfully', async () => {
+    const payload: CreateTransactionRequest = {
+      amount: 150.75,
+      timestamp: new Date().toISOString(),
     };
 
-    await createTransactionUseCase.execute(props);
+    await createTransactionUseCase.execute(payload);
 
     expect(spyTransactionRespositoryCreate).toHaveBeenCalledTimes(1);
-    expect(createTransactionUseCase.execute(props)).not.toBeInstanceOf(CreateTransactionUnexpectedError);
+    expect(spyTransactionRespositoryCreate).toHaveBeenCalledWith(expect.any(Transaction));
+  });
+
+  it('should throw CreateTransactionUnexpectedError if repository.create fails', async () => {
+    spyTransactionRespositoryCreate.mockImplementationOnce(() => {
+      throw new CreateTransactionUnexpectedError();
+    });
+
+    const payload: CreateTransactionRequest = {
+      amount: 100.00,
+      timestamp: new Date().toISOString(),
+    };
+
+    await expect(createTransactionUseCase.execute(payload)).rejects.toThrow(CreateTransactionUnexpectedError);
+    expect(spyTransactionRespositoryCreate).toHaveBeenCalledTimes(1);
   });
 });
