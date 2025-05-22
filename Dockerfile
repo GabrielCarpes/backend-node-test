@@ -1,25 +1,23 @@
-# Etapa 1: build
-FROM node:23-alpine AS builder
+# Etapa 1: build da aplicação
+FROM node:20 AS builder
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package*.json ./
+RUN npm install
 
 COPY . .
+RUN npm run build
 
-RUN yarn test
-
-RUN yarn build
-
-FROM node:23-alpine
+# Etapa 2: imagem final para produção
+FROM node:20
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-RUN yarn install --production --frozen-lockfile
-
+# Copia apenas o necessário da imagem de build
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 
+# Inicia a aplicação
 CMD ["node", "dist/main.js"]
-
