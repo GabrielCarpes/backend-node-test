@@ -1,23 +1,22 @@
-# Etapa 1: build da aplicação
 FROM node:20 AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY package.json yarn.lock ./
+RUN yarn install
 
 COPY . .
-RUN npm run build
 
-# Etapa 2: imagem final para produção
-FROM node:20
+RUN yarn build
+
+RUN echo "📁 Conteúdo da pasta /app/dist:" && find dist
+
+FROM node:20 AS production
 
 WORKDIR /app
 
-# Copia apenas o necessário da imagem de build
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json /app/yarn.lock ./
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 
-# Inicia a aplicação
 CMD ["node", "dist/main.js"]

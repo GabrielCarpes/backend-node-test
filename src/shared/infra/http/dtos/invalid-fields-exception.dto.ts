@@ -7,7 +7,7 @@ const message = ["amount é obrigatório", "timestamp é obrigatório"];
 
 export class InvalidFieldsExceptionDTO extends BadRequestException {
   @ApiProperty({
-    type: [String, Array],
+    type: [String],
     example: message,
   })
   public message!: string;

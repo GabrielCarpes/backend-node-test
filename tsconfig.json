@@ -11,6 +11,7 @@
     "target": "es2022",
     "sourceMap": true,
     "outDir": "./dist",
+    "noEmit": false,
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
