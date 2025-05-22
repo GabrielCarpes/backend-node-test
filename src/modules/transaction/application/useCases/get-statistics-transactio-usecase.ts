@@ -2,23 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { Transaction } from '../entities/transaction';
 import { TransactionRepository } from '../repositories/transaction.repository';
 import { CreateTransactionUnexpectedError } from '../errors/create-transaction-unexpected-error';
-import { CreateTransactionRequest } from '../interfaces/transaction.interface';
+import { Stats } from '../interfaces/transaction.interface';
 
 @Injectable()
-export class CreateTransactionUseCase {
+export class GetStatsTransactionUseCase {
   constructor(private readonly transactionRepository: TransactionRepository) { }
 
-  async execute({
-    amount,
-    timestamp
-  }: CreateTransactionRequest): Promise<void> {
+  async execute(): Promise<Stats> {
     try {
-      const transaction = new Transaction({
-        amount,
-        timestamp
-      });
-
-      return this.transactionRepository.create(transaction);
+      return this.transactionRepository.getStats();
     } catch (error) {
       throw new CreateTransactionUnexpectedError();
     }

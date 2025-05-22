@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { CreateTransactionRequest } from "../interfaces/create-transaction-request.interface";
 import { CreateTransactionUnexpectedError } from "../errors/create-transaction-unexpected-error";
 import { CreateTransactionUseCase } from "../useCases/create-transactio-usecase";
 import { isFutureDate, isISODate } from "@shared/utils/date-validation";
 import { InvalidTimestampTransactionError } from "../errors/invalid-timestamp-error";
 import { InvalidFormatTimestampTransactionError } from "../errors/invalid-timestamp-format-error";
+import { CreateTransactionRequest } from "../interfaces/transaction.interface";
 
 @Injectable()
 export class CreateTransactionService {
